@@ -1,8 +1,8 @@
-# Web deploy only — Vite app at repo root; Supabase is hosted separately.
+# Vercel deploys Vite web only (repo root). Keep scripts/ for build.
 mobile/
 releases/
-scripts/
 supabase/
 **/*.apk
 **/.dart_tool
 **/build/
+.cache/

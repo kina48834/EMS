@@ -6,7 +6,7 @@
   "installCommand": "npm install",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!EMS\\.apk|assets/).*)",
       "destination": "/index.html"
     }
   ],
