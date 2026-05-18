@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, type ReactNode } from 'react'
-import L from 'leaflet'
+import L from '@/lib/leafletRuntime'
 
 import { emsColors } from '@/lib/theme'
 import type { GeoPoint, Incident, IncidentStatus } from '@/system/types'

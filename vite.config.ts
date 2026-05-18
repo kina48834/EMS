@@ -8,6 +8,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@ems/shared': path.resolve(__dirname, './shared'),
+      // Web maps use CDN Leaflet (see index.html) — avoids Rolldown bundling leaflet assets on Vercel.
+      leaflet: path.resolve(__dirname, './src/lib/leafletRuntime.ts'),
     },
   },
   build: {
