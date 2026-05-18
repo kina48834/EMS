@@ -1,0 +1,44 @@
+{
+  "name": "ems",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "ISC",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "bash scripts/ensure-apk-public.sh && vite build",
+    "sync:apk:public": "bash scripts/ensure-apk-public.sh",
+    "preview": "vite preview",
+    "mobile": "npm run start --prefix mobile",
+    "mobile:android": "npm run android --prefix mobile",
+    "mobile:ios": "npm run ios --prefix mobile",
+    "mobile:web": "npm run web --prefix mobile",
+    "mobile:prebuild:android": "npm run prebuild:android --prefix mobile",
+    "build:ems:apk": "bash scripts/build-expo-apk.sh",
+    "build:ems:apk:debug": "bash scripts/build-expo-apk-debug.sh",
+    "build:android:apk": "bash scripts/build-expo-apk.sh"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.105.4",
+    "@types/leaflet": "^1.9.21",
+    "leaflet": "^1.9.4",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-router-dom": "^7.13.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.0"
+  }
+}

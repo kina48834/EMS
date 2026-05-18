@@ -1,0 +1,27 @@
+-- EMS — platform sync notes (no DDL). Web + Expo use the same Supabase project.
+--
+-- Environment (must match):
+--   Web:    VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY  → src/lib/supabase.ts
+--   Vercel: same VITE_* vars in Project → Environment Variables (build + runtime)
+--   Android APK: npm run build:ems:apk → Expo prebuild + Gradle (Java/Kotlin)
+--   Mobile: EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY → mobile/.env
+--
+-- Auth storage (application code, not SQL):
+--   Web + Expo web → localStorage (shared/supabase/authStorage.ts)
+--   iOS/Android    → expo-secure-store
+--
+-- Maps (application code):
+--   Vite web + Expo web → Leaflet + OpenStreetMap tiles
+--   iOS/Android Expo    → react-native-maps
+--
+-- Shared API: shared/supabase/createEmsClient.ts (used by both apps)
+--
+-- Profile: users.id = public account ID; change password via Supabase Auth (client);
+--   update display name via ems_update_own_profile (14_profile.sql).
+--
+-- After schema changes, re-run as needed:
+--   00_all_in_one.sql → 12 → 14 → 15 → 16_resident_mark_manage.sql → demo_accounts.sql
+--
+-- Resident marks: edit/delete own incidents while status is pending or rejected (16_resident_mark_manage.sql).
+
+SELECT 'EMS web and mobile clients should use the same Supabase URL and anon key' AS reminder;

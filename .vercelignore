@@ -1,0 +1,8 @@
+# Web deploy only — Vite app at repo root; Supabase is hosted separately.
+mobile/
+releases/
+scripts/
+supabase/
+**/*.apk
+**/.dart_tool
+**/build/
