@@ -10,6 +10,9 @@ export default defineConfig({
       '@ems/shared': path.resolve(__dirname, './shared'),
     },
   },
+  build: {
+    chunkSizeWarningLimit: 800,
+  },
   server: {
     port: 5173,
     strictPort: true,
