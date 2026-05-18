@@ -36,6 +36,17 @@ ensure_java17() {
 
 ensure_java17
 
+echo "→ Embedding Supabase env for release bundle…"
+node "$ROOT/scripts/generate-mobile-env.mjs"
+
+if [[ -f "$MOBILE/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "$MOBILE/.env"
+  set +a
+  export EXPO_PUBLIC_SUPABASE_URL EXPO_PUBLIC_SUPABASE_ANON_KEY
+fi
+
 echo "→ Installing mobile dependencies…"
 (cd "$MOBILE" && npm install && npx expo install --fix)
 

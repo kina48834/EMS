@@ -1,6 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import OsmMapTiles, { nativeMapType } from './OsmMapTiles';
 import { PH_CENTER, pinColorForStatus, regionForPoint, regionForPoints } from '../../lib/incidentMap';
 import type { IncidentsMapRef, IncidentsMapViewProps } from './types';
 
@@ -29,7 +30,8 @@ const IncidentsMapView = forwardRef<IncidentsMapRef, IncidentsMapViewProps>(func
 
   return (
     <View style={[styles.wrap, style]}>
-      <MapView ref={mapRef} style={styles.map} initialRegion={PH_CENTER}>
+      <MapView ref={mapRef} style={styles.map} initialRegion={PH_CENTER} mapType={nativeMapType}>
+        <OsmMapTiles />
         {markers.map((m) => (
           <Marker
             key={m.id}

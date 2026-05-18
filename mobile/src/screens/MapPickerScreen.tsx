@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { formatApiError } from '../lib/apiErrorMessage';
 import {
   ActivityIndicator,
   FlatList,
@@ -16,7 +17,9 @@ import type { IncidentType } from '../models';
 import { reverseGeocode, searchPlacesPh, type PlaceSuggestion } from '../nominatim';
 import LocationPickerMap from '../components/maps/LocationPickerMap';
 import type { LocationPickerMapRef } from '../components/maps/LocationPickerMap.types';
+import MapScreenShell from '../components/layout/MapScreenShell';
 import Button from '../components/ui/Button';
+import HeaderIconButton from '../components/ui/HeaderIconButton';
 import MapLegend from '../components/MapLegend';
 import { colors } from '../theme';
 import { incidentsToMarkers } from '../lib/incidentMap';
@@ -55,7 +58,7 @@ export default function MapPickerScreen({ navigation, route }: Props) {
       setMarkers(incidentsToMarkers(items));
       setTimeout(() => mapRef.current?.fitToMarkers(), 100);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }
@@ -64,16 +67,6 @@ export default function MapPickerScreen({ navigation, route }: Props) {
   useEffect(() => {
     void loadIncidents();
   }, [loadIncidents]);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Pressable onPress={() => void loadIncidents()} style={{ marginRight: 16 }}>
-          <Text style={{ color: colors.primary, fontSize: 17, fontWeight: '600' }}>Refresh</Text>
-        </Pressable>
-      ),
-    });
-  }, [navigation, loadIncidents]);
 
   useEffect(() => {
     return () => {
@@ -122,7 +115,7 @@ export default function MapPickerScreen({ navigation, route }: Props) {
       });
       navigation.pop(2);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
       setResolvingName(false);
@@ -148,8 +141,13 @@ export default function MapPickerScreen({ navigation, route }: Props) {
   }
 
   return (
-    <View style={styles.flex}>
-      <LocationPickerMap
+    <MapScreenShell
+      title="Mark location"
+      subtitle="Tap the map or search for a place"
+      headerRight={<HeaderIconButton label="Refresh marks" icon="↻" onPress={() => void loadIncidents()} />}
+    >
+      <View style={styles.flex}>
+        <LocationPickerMap
         ref={mapRef}
         style={styles.map}
         markers={markers}
@@ -193,7 +191,7 @@ export default function MapPickerScreen({ navigation, route }: Props) {
         ) : null}
       </View>
 
-      <MapLegend bottomOffset={160} />
+      <MapLegend bottomInset={150} />
 
       <View style={styles.bottomCard}>
         {error ? <Text style={styles.err}>{error}</Text> : null}
@@ -226,7 +224,8 @@ export default function MapPickerScreen({ navigation, route }: Props) {
           ) : null}
         </View>
       </View>
-    </View>
+      </View>
+    </MapScreenShell>
   );
 }
 

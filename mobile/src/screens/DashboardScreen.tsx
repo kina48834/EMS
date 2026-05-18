@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { formatApiError } from '../lib/apiErrorMessage';
 import { ActivityIndicator, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -22,7 +23,7 @@ type Props = NativeStackScreenProps<AppStackParamList, 'Dashboard'>;
 export default function DashboardScreen({ navigation }: Props) {
   const api = useApi();
   const user = useUser();
-  const { gap, isWide, isCompact } = useLayout();
+  const { gap, isWide, stackActions } = useLayout();
   const [busy, setBusy] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +36,7 @@ export default function DashboardScreen({ navigation }: Props) {
       const items = await api.listIncidentsForReporter(user.id);
       setIncidents(items);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
       setInitialLoad(false);
@@ -61,7 +62,7 @@ export default function DashboardScreen({ navigation }: Props) {
       await api.deleteIncident(i.id);
       await refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }
@@ -76,11 +77,12 @@ export default function DashboardScreen({ navigation }: Props) {
     <Screen
       title="My reports"
       subtitle="View, edit, and manage your marked incidents."
+      showBack={false}
       refreshControl={
         <RefreshControl refreshing={busy && !initialLoad} onRefresh={refresh} tintColor={colors.primary} />
       }
     >
-      <View style={[styles.actions, { gap }, isWide && styles.actionsWide, isCompact && styles.actionsStack]}>
+      <View style={[styles.actions, { gap }, isWide && styles.actionsWide, stackActions && styles.actionsStack]}>
         <QuickAction
           title="New report"
           subtitle="Save details & mark on map"

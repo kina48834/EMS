@@ -12,6 +12,7 @@ import Input from '../components/ui/Input';
 import Card from '../components/ui/Card';
 import AlertBanner from '../components/ui/Alert';
 import { DEMO_ACCOUNTS } from '../constants/demoAccounts';
+import { formatApiError } from '../lib/apiErrorMessage';
 import { colors, spacing } from '../theme';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'> & { onLoggedIn: (u: User) => void };
@@ -53,7 +54,7 @@ export default function LoginScreen({ navigation, onLoggedIn }: Props) {
       const user = await api.login({ email: e, password: loginPassword });
       onLoggedIn(user);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign in failed. Check your credentials.');
+      setError(formatApiError(err));
     } finally {
       setBusy(false);
     }

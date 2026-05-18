@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { formatApiError } from '../../lib/apiErrorMessage';
 import { StyleSheet, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { Gender } from '@ems/shared/types';
@@ -78,7 +79,7 @@ export default function ProfileScreen({ navigation }: Props) {
       setUser(updated);
       setMessage('Profile saved.');
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setProfileBusy(false);
     }
@@ -101,7 +102,7 @@ export default function ProfileScreen({ navigation }: Props) {
       setMessage('Password updated.');
       await refreshUser();
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setPasswordBusy(false);
     }
@@ -158,7 +159,6 @@ export default function ProfileScreen({ navigation }: Props) {
         />
       </Card>
 
-      <Button title="← Back" variant="ghost" fullWidth onPress={() => navigation.goBack()} />
     </Screen>
   );
 }

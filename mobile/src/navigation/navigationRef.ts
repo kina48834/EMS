@@ -4,11 +4,16 @@ export const navigationRef = createNavigationContainerRef();
 
 export function navigate(name: string, params?: object) {
   if (!navigationRef.isReady()) return;
-  if (params) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (navigationRef as any).navigate(name, params);
-  } else {
-    navigationRef.navigate(name as never);
+  try {
+    if (params) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (navigationRef as any).navigate(name, params);
+    } else {
+      navigationRef.navigate(name as never);
+    }
+  } catch {
+    // Invalid route for current stack — avoid crashing the APK.
+    console.warn(`Navigation to "${name}" failed`);
   }
 }
 

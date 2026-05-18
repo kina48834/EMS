@@ -10,7 +10,12 @@ const steps = [
   { title: 'Track', body: 'Follow status updates from officials and responders.' },
 ]
 
-const APK_DOWNLOAD_URL = '/EMS.apk'
+/** Dev: `public/EMS.apk`. Production: GitHub release (override with VITE_APK_DOWNLOAD_URL). */
+const APK_DOWNLOAD_URL =
+  import.meta.env.VITE_APK_DOWNLOAD_URL ||
+  (import.meta.env.DEV
+    ? '/EMS.apk'
+    : 'https://github.com/kina48834/EMS/releases/download/v1.0.0/EMS.apk')
 const APK_FILENAME = 'EMS.apk'
 
 const roles = [
@@ -75,9 +80,10 @@ export default function HomePage() {
                   <a
                     href={APK_DOWNLOAD_URL}
                     download={APK_FILENAME}
+                    rel="noopener noreferrer"
                     className="inline-flex min-h-10 items-center justify-center rounded-xl border border-white/30 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20"
                   >
-                    Download Android app
+                    Download Android app (EMS.apk)
                   </a>
                 </div>
               </div>

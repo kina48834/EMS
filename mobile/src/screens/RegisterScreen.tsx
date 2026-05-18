@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { formatApiError } from '../lib/apiErrorMessage';
 import { Keyboard, Pressable, StyleSheet, Text } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { Gender } from '@ems/shared/types';
@@ -52,7 +53,7 @@ export default function RegisterScreen({ navigation, onRegistered }: Props) {
         setBarangayId(list[0]?.id ?? null);
         setError(null);
       } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : String(e));
+        if (!cancelled) setError(formatApiError(e));
       } finally {
         if (!cancelled) setBarangaysLoading(false);
       }
@@ -108,7 +109,7 @@ export default function RegisterScreen({ navigation, onRegistered }: Props) {
       });
       onRegistered(user);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed. Try a different email.');
+      setError(formatApiError(err));
     } finally {
       setBusy(false);
     }

@@ -1,20 +1,29 @@
 import type { ReactNode } from 'react';
-import { ScrollView, StyleSheet, Text, View, type ScrollViewProps } from 'react-native';
+import { ScrollView, StyleSheet, View, type ScrollViewProps } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import MenuButton from '../layout/MenuButton';
-import { useAppLayoutOptional } from '../../context/AppLayoutContext';
+import AppScreenHeader from '../layout/AppScreenHeader';
 import { useLayout } from '../../hooks/useLayout';
-import { colors, spacing, typography } from '../../theme';
+import { colors, spacing } from '../../theme';
 
 type Props = ScrollViewProps & {
   title?: string;
   subtitle?: string;
+  showBack?: boolean;
+  headerRight?: ReactNode;
   children: ReactNode;
 };
 
-export default function Screen({ title, subtitle, children, contentContainerStyle, ...scrollProps }: Props) {
+export default function Screen({
+  title,
+  subtitle,
+  showBack,
+  headerRight,
+  children,
+  contentContainerStyle,
+  ...scrollProps
+}: Props) {
   const { contentPadding, maxContentWidth, isWide } = useLayout();
-  const layout = useAppLayoutOptional();
+  const hasHeader = Boolean(title || subtitle || headerRight);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
@@ -30,15 +39,14 @@ export default function Screen({ title, subtitle, children, contentContainerStyl
         {...scrollProps}
       >
         <View style={[styles.inner, { maxWidth: maxContentWidth }, isWide && styles.innerWide]}>
-          {(title || layout) && (
-            <View style={styles.header}>
-              {layout ? <MenuButton /> : null}
-              <View style={styles.headerText}>
-                {title ? <Text style={styles.title}>{title}</Text> : null}
-                {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
-              </View>
-            </View>
-          )}
+          {hasHeader ? (
+            <AppScreenHeader
+              title={title}
+              subtitle={subtitle}
+              showBack={showBack}
+              right={headerRight}
+            />
+          ) : null}
           {children}
         </View>
       </ScrollView>
@@ -52,14 +60,4 @@ const styles = StyleSheet.create({
   content: { paddingBottom: spacing.xxl + spacing.lg, flexGrow: 1 },
   inner: { width: '100%', alignSelf: 'center' },
   innerWide: { paddingTop: spacing.sm },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.md,
-    marginBottom: spacing.lg,
-    paddingTop: spacing.sm,
-  },
-  headerText: { flex: 1, minWidth: 0 },
-  title: { ...typography.h1, fontSize: 24, color: colors.text },
-  subtitle: { ...typography.bodySm, color: colors.textMuted, marginTop: spacing.xs, lineHeight: 22 },
 });

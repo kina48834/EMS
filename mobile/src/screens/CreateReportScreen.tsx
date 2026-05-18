@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { formatApiError } from '../lib/apiErrorMessage';
 import {
   ActivityIndicator,
   FlatList,
@@ -75,7 +76,7 @@ export default function CreateReportScreen({ navigation }: Props) {
       }
       setTimeout(() => mapRef.current?.fitToMarkers(), 120);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     }
   }, [api, user.id, user.barangayId]);
 
@@ -125,7 +126,7 @@ export default function CreateReportScreen({ navigation }: Props) {
       await api.deleteIncident(i.id);
       await refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }
@@ -161,7 +162,7 @@ export default function CreateReportScreen({ navigation }: Props) {
       setPin(null);
       await refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }
@@ -188,14 +189,15 @@ export default function CreateReportScreen({ navigation }: Props) {
   }
 
   return (
-    <Screen contentContainerStyle={styles.pad}>
-      <Text style={styles.h1}>New incident report</Text>
-      <Text style={styles.sub}>
-        {draftSaved
+    <Screen
+      title="New incident report"
+      subtitle={
+        draftSaved
           ? 'Tap the map to mark your report. Colored dots are existing marks.'
-          : 'Save report info below, then mark on the map.'}
-      </Text>
-
+          : 'Save report info below, then mark on the map.'
+      }
+      contentContainerStyle={styles.pad}
+    >
       <View style={styles.mapSection}>
         <LocationPickerMap
           ref={mapRef}
@@ -235,7 +237,7 @@ export default function CreateReportScreen({ navigation }: Props) {
             </View>
           ) : null}
         </View>
-        <MapLegend bottomOffset={12} />
+        <MapLegend bottomInset={8} />
       </View>
 
       <Card style={styles.section}>
@@ -326,11 +328,9 @@ export default function CreateReportScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  pad: { padding: spacing.lg, paddingBottom: spacing.xl * 3 },
-  h1: { fontSize: 22, fontWeight: '700', color: colors.text },
-  sub: { fontSize: 14, color: colors.textMuted, marginTop: spacing.xs, marginBottom: spacing.md },
+  pad: { paddingBottom: spacing.xl * 2 },
   mapSection: {
-    height: 360,
+    height: 320,
     borderRadius: radius.lg,
     overflow: 'hidden',
     marginBottom: spacing.lg,

@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { formatApiError } from '../../lib/apiErrorMessage';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -48,7 +49,7 @@ export default function ResponderDetailScreen({ navigation, route }: Props) {
         setNotes(mine.notes);
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }
@@ -77,7 +78,7 @@ export default function ResponderDetailScreen({ navigation, route }: Props) {
       }
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }

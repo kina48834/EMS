@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { formatApiError } from '../../lib/apiErrorMessage';
 import { RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -43,7 +44,7 @@ export default function ResponderDashboardScreen({ navigation }: Props) {
       for (const [id, r] of entries) map[id] = r;
       setMyResponses(map);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }
@@ -57,7 +58,7 @@ export default function ResponderDashboardScreen({ navigation }: Props) {
 
   if (!barangayId || !user.responderKind) {
     return (
-      <Screen title="Responder" subtitle="Account missing barangay or responder type.">
+      <Screen title="Responder" subtitle="Account missing barangay or responder type." showBack={false}>
         <Text style={styles.err}>Cannot load queue.</Text>
       </Screen>
     );
@@ -67,6 +68,7 @@ export default function ResponderDashboardScreen({ navigation }: Props) {
     <Screen
       title="Emergency responder"
       subtitle={`${user.responderKind} · approved incidents in your barangay`}
+      showBack={false}
       refreshControl={<RefreshControl refreshing={busy && incidents.length > 0} onRefresh={refresh} tintColor={colors.primary} />}
     >
       <QuickAction

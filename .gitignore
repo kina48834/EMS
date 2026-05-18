@@ -11,3 +11,4 @@ mobile/node_modules/
 releases/
 public/EMS.apk
 mobile/android/
+mobile/src/config/supabaseEnv.generated.ts

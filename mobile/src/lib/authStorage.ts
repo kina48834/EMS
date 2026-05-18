@@ -1,14 +1,10 @@
 import { Platform } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
-import {
-  createNativeAuthStorage,
-  createWebAuthStorage,
-  type AuthStorageAdapter,
-} from '@ems/shared/supabase/authStorage';
+import { createWebAuthStorage, type AuthStorageAdapter } from '@ems/shared/supabase/authStorage';
+import { getLargeAuthStorage } from './largeAuthStorage';
 
 let cached: AuthStorageAdapter | null = null;
 
-/** SecureStore on iOS/Android; localStorage on Expo web (fixes deleteValueWithKeyAsync error). */
+/** Encrypted AsyncStorage on native (sessions exceed SecureStore 2048 B); localStorage on web. */
 export function getMobileAuthStorage(): AuthStorageAdapter {
   if (cached) return cached;
 
@@ -17,10 +13,6 @@ export function getMobileAuthStorage(): AuthStorageAdapter {
     return cached;
   }
 
-  cached = createNativeAuthStorage({
-    getItemAsync: SecureStore.getItemAsync,
-    setItemAsync: SecureStore.setItemAsync,
-    deleteItemAsync: SecureStore.deleteItemAsync,
-  });
+  cached = getLargeAuthStorage();
   return cached;
 }

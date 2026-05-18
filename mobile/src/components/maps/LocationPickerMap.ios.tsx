@@ -1,6 +1,7 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import OsmMapTiles, { nativeMapType } from './OsmMapTiles';
 import { PH_CENTER, pinColorForStatus, regionForPoint, regionForPoints } from '../../lib/incidentMap';
 import type { LocationPickerMapProps, LocationPickerMapRef } from './LocationPickerMap.types';
 
@@ -28,12 +29,14 @@ const LocationPickerMap = forwardRef<LocationPickerMapRef, LocationPickerMapProp
         ref={mapRef}
         style={styles.map}
         initialRegion={PH_CENTER}
+        mapType={nativeMapType}
         onPress={
           pickEnabled
             ? (e) => onPick(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)
             : undefined
         }
       >
+        <OsmMapTiles />
         {markers.map((m) => (
           <Marker
             key={m.id}

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { formatApiError } from '../lib/apiErrorMessage';
 import {
   ActivityIndicator,
   FlatList,
@@ -83,7 +84,7 @@ export default function EditScreen({ navigation, route }: Props) {
         mapRef.current?.focusPoint(i.location.lat, i.location.lng);
       }, 80);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }
@@ -165,7 +166,7 @@ export default function EditScreen({ navigation, route }: Props) {
       });
       navigation.goBack();
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }
@@ -183,7 +184,7 @@ export default function EditScreen({ navigation, route }: Props) {
       await api.deleteIncident(incident.id);
       navigation.popToTop();
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }
@@ -243,7 +244,7 @@ export default function EditScreen({ navigation, route }: Props) {
                     </View>
                   ) : null}
                 </View>
-                <MapLegend bottomOffset={12} />
+                <MapLegend bottomInset={12} />
               </View>
 
               {location ? (

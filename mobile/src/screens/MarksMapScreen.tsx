@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { formatApiError } from '../lib/apiErrorMessage';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
 import type { AppStackParamList } from '../navigation/types';
@@ -10,8 +11,10 @@ import { confirmAction } from '../lib/confirm';
 import { canManageOwnMark } from '../lib/incidentManage';
 import IncidentsMapView from '../components/maps/IncidentsMapView';
 import type { IncidentsMapRef } from '../components/maps/types';
+import MapScreenShell from '../components/layout/MapScreenShell';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
+import HeaderIconButton from '../components/ui/HeaderIconButton';
 import MapLegend from '../components/MapLegend';
 import StatusBadge from '../components/ui/StatusBadge';
 import { incidentsToMarkers, locationLabel } from '../lib/incidentMap';
@@ -44,7 +47,7 @@ export default function MarksMapScreen({ navigation }: Props) {
       });
       setTimeout(() => mapRef.current?.fitToMarkers(), 100);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }
@@ -83,35 +86,36 @@ export default function MarksMapScreen({ navigation }: Props) {
       setSelected(null);
       await refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }
   }
 
+  const markLabel = `${incidents.length} mark${incidents.length === 1 ? '' : 's'} on map`;
+
   return (
-    <View style={styles.flex}>
-      <IncidentsMapView
-        ref={mapRef}
-        style={styles.map}
-        markers={markers}
-        selectedId={selected?.id ?? null}
-        onMarkerPress={onSelectById}
-      />
+    <MapScreenShell
+      title="My Marks Map"
+      subtitle={markLabel}
+      headerRight={<HeaderIconButton label="Refresh map" icon="↻" onPress={() => void refresh()} />}
+    >
+      <View style={styles.flex}>
+        <IncidentsMapView
+          ref={mapRef}
+          style={styles.map}
+          markers={markers}
+          selectedId={selected?.id ?? null}
+          onMarkerPress={onSelectById}
+        />
 
-      {busy ? (
-        <View style={styles.overlay}>
-          <ActivityIndicator color={colors.primary} size="large" />
-        </View>
-      ) : null}
+        {busy ? (
+          <View style={styles.overlay}>
+            <ActivityIndicator color={colors.primary} size="large" />
+          </View>
+        ) : null}
 
-      <View style={styles.topBar}>
-        <Text style={styles.count}>
-          {incidents.length} mark{incidents.length === 1 ? '' : 's'}
-        </Text>
-      </View>
-
-      <MapLegend bottomOffset={140} />
+        <MapLegend />
 
       <View style={styles.bottom}>
         {selected == null ? (
@@ -157,10 +161,8 @@ export default function MarksMapScreen({ navigation }: Props) {
         )}
       </View>
 
-      <Pressable style={styles.refreshFab} onPress={() => void refresh()}>
-        <Text style={styles.refreshFabText}>↻</Text>
-      </Pressable>
-    </View>
+      </View>
+    </MapScreenShell>
   );
 }
 
@@ -173,18 +175,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  topBar: {
-    position: 'absolute',
-    top: spacing.md,
-    left: spacing.md,
-    backgroundColor: 'rgba(255,255,255,0.95)',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  count: { fontSize: 12, fontWeight: '600', color: colors.text },
   bottom: {
     position: 'absolute',
     left: spacing.lg,
@@ -206,19 +196,4 @@ const styles = StyleSheet.create({
   muted: { fontSize: 14, color: colors.textMuted, lineHeight: 20 },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   err: { color: colors.danger, marginTop: spacing.sm, fontSize: 13 },
-  refreshFab: {
-    position: 'absolute',
-    top: spacing.md,
-    right: spacing.md,
-    width: 44,
-    height: 44,
-    borderRadius: radius.full,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 3,
-  },
-  refreshFabText: { fontSize: 22, color: colors.primary },
 });

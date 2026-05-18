@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { formatApiError } from '../../lib/apiErrorMessage';
 import {
   ActivityIndicator,
   Pressable,
@@ -14,10 +15,12 @@ import { useApi } from '../../context/ApiContext';
 import { useUser } from '../../context/UserContext';
 import { IncidentStatus, Role, type ID, type Incident, type User } from '../../models';
 import type { IncidentStatus as StatusFilter } from '@ems/shared/types';
+import MapScreenShell from '../../components/layout/MapScreenShell';
 import IncidentsMapView from '../../components/maps/IncidentsMapView';
 import type { IncidentsMapRef } from '../../components/maps/types';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
+import HeaderIconButton from '../../components/ui/HeaderIconButton';
 import MapLegend from '../../components/MapLegend';
 import StatusBadge from '../../components/ui/StatusBadge';
 import { incidentsToMarkers, locationLabel } from '../../lib/incidentMap';
@@ -60,7 +63,7 @@ export default function ResponderMarksMapScreen({ navigation }: Props) {
       setResidents(roleUsers.filter((r) => r.barangayId === barangayId));
       setTimeout(() => mapRef.current?.fitToMarkers(), 100);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }
@@ -118,8 +121,13 @@ export default function ResponderMarksMapScreen({ navigation }: Props) {
   }
 
   return (
-    <View style={styles.flex}>
-      <IncidentsMapView
+    <MapScreenShell
+      title="Resident marks map"
+      subtitle={`${filtered.length} mark${filtered.length === 1 ? '' : 's'} in barangay`}
+      headerRight={<HeaderIconButton label="Refresh map" icon="↻" onPress={() => void refresh()} />}
+    >
+      <View style={styles.flex}>
+        <IncidentsMapView
         ref={mapRef}
         style={styles.map}
         markers={markers}
@@ -173,7 +181,7 @@ export default function ResponderMarksMapScreen({ navigation }: Props) {
         </Text>
       </View>
 
-      <MapLegend bottomOffset={140} />
+      <MapLegend bottomInset={150} />
 
       <View style={styles.bottom}>
         {error ? <Text style={styles.err}>{error}</Text> : null}
@@ -214,13 +222,8 @@ export default function ResponderMarksMapScreen({ navigation }: Props) {
         )}
       </View>
 
-      <Pressable style={styles.backFab} onPress={() => navigation.goBack()}>
-        <Text style={styles.backFabText}>←</Text>
-      </Pressable>
-      <Pressable style={styles.refreshFab} onPress={() => void refresh()}>
-        <Text style={styles.refreshFabText}>↻</Text>
-      </Pressable>
-    </View>
+      </View>
+    </MapScreenShell>
   );
 }
 
@@ -252,9 +255,9 @@ const styles = StyleSheet.create({
   },
   filters: {
     position: 'absolute',
-    top: spacing.md,
-    left: spacing.md,
-    right: spacing.md,
+    top: spacing.sm,
+    left: spacing.sm,
+    right: spacing.sm,
     backgroundColor: 'rgba(255,255,255,0.95)',
     borderRadius: radius.lg,
     borderWidth: 1,
@@ -288,32 +291,4 @@ const styles = StyleSheet.create({
   mutedSmall: { fontSize: 12, color: colors.textMuted, flex: 1 },
   actions: { flexDirection: 'row', gap: spacing.sm },
   err: { color: colors.danger, marginBottom: spacing.sm, fontSize: 13 },
-  backFab: {
-    position: 'absolute',
-    top: 120,
-    left: spacing.md,
-    width: 40,
-    height: 40,
-    borderRadius: radius.full,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  backFabText: { fontSize: 20, color: colors.text },
-  refreshFab: {
-    position: 'absolute',
-    top: 120,
-    right: spacing.md,
-    width: 44,
-    height: 44,
-    borderRadius: radius.full,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  refreshFabText: { fontSize: 22, color: colors.primary },
 });

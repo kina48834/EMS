@@ -11,9 +11,12 @@ export function useLayout() {
 
   const isWide = width >= 600;
   const isCompact = width < 380;
+  const stackActions = width < 520;
   const contentPadding = isCompact ? 14 : isWide ? 24 : 16;
   const gap = isCompact ? 8 : 12;
   const buttonSize = isCompact ? ('sm' as const) : ('md' as const);
+  const headerTitleSize = isCompact ? 20 : isWide ? 26 : 22;
+  const headerSubtitleSize = isCompact ? 13 : 14;
 
   return {
     width,
@@ -21,9 +24,12 @@ export function useLayout() {
     size,
     isWide,
     isCompact,
+    stackActions,
     contentPadding,
     gap,
     buttonSize,
+    headerTitleSize,
+    headerSubtitleSize,
     maxContentWidth: layout.maxContentWidth,
     columns: isWide ? 2 : 1,
   };

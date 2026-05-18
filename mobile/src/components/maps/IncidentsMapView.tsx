@@ -8,7 +8,9 @@ type MapComponent = import('react').ForwardRefExoticComponent<
 const IncidentsMapView: MapComponent =
   Platform.OS === 'web'
     ? require('./IncidentsMapView.web').default
-    : require('./IncidentsMapView.native').default;
+    : Platform.OS === 'android'
+      ? require('./IncidentsMapView.android').default
+      : require('./IncidentsMapView.ios').default;
 
 export default IncidentsMapView;
 export type { IncidentsMapRef, IncidentsMapViewProps, IncidentMapMarker } from './types';

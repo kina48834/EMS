@@ -1,7 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import L, { ensureLeafletStyles } from '../../lib/leafletWeb';
 import { statusToHexColor } from '../../lib/incidentMap';
 import type { LocationPickerMapProps, LocationPickerMapRef } from './LocationPickerMap.types';
 
@@ -49,6 +48,8 @@ const LocationPickerMap = forwardRef<LocationPickerMapRef, LocationPickerMapProp
   useEffect(() => {
     const el = containerRef.current;
     if (!el || mapRef.current) return;
+
+    ensureLeafletStyles();
 
     const map = L.map(el, { center: DEFAULT_CENTER, zoom: 10, zoomControl: true });
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

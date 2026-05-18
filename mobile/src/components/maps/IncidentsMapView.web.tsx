@@ -1,7 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import L, { ensureLeafletStyles } from '../../lib/leafletWeb';
 import { statusToHexColor } from '../../lib/incidentMap';
 import type { IncidentsMapRef, IncidentsMapViewProps } from './types';
 
@@ -51,6 +50,8 @@ const IncidentsMapView = forwardRef<IncidentsMapRef, IncidentsMapViewProps>(func
   useEffect(() => {
     const el = containerRef.current;
     if (!el || mapRef.current) return;
+
+    ensureLeafletStyles();
 
     const map = L.map(el, {
       center: DEFAULT_CENTER,

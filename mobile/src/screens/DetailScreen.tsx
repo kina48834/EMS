@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { formatApiError } from '../lib/apiErrorMessage';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
@@ -39,7 +40,7 @@ export default function DetailScreen({ navigation, route }: Props) {
       setResponses(res);
       setAlerts(filtered);
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }
@@ -66,7 +67,7 @@ export default function DetailScreen({ navigation, route }: Props) {
       await api.deleteIncident(incident.id);
       navigation.goBack();
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(formatApiError(e));
     } finally {
       setBusy(false);
     }

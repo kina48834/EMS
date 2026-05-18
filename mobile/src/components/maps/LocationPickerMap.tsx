@@ -8,7 +8,9 @@ type Comp = import('react').ForwardRefExoticComponent<
 const LocationPickerMap: Comp =
   Platform.OS === 'web'
     ? require('./LocationPickerMap.web').default
-    : require('./LocationPickerMap.native').default;
+    : Platform.OS === 'android'
+      ? require('./LocationPickerMap.android').default
+      : require('./LocationPickerMap.ios').default;
 
 export default LocationPickerMap;
 export type { LocationPickerMapProps, LocationPickerMapRef };
